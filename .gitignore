@@ -1,0 +1,62 @@
+# Compiled object files
+*.o
+
+# Compiled dynamic libraries
+*.so
+
+# Compiled static libraries
+*.a
+
+# Executable files
+a.out
+*.out
+*.exe
+
+# Debugging files
+*.dSYM/
+*.core
+core.*
+
+# Build directories
+/build/
+/bin/
+/obj/
+
+# Dependency resolution files
+*.d
+
+# IDE and editor-specific files
+*.swp
+*.swo
+*.bak
+*~
+.vscode/
+.idea/
+.clangd/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.pid
+
+# cscope and tags
+cscope.*
+tags
+TAGS
+
+# Auto-generated files
+Makefile
+Makefile.*
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Operating system-specific files
+.DS_Store
+Thumbs.db
+
+# Coverage and profiling
+*.gcno
+*.gcda
+*.gcov
+.lcov
