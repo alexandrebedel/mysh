@@ -43,7 +43,7 @@ void display_char_tab(char **tab)
         printf("Element %d: [%s]\n", i, tab[i]);
 }
 
-int two_d_size(void **tab)
+int tab_len(void **tab)
 {
     int i = 0;
 

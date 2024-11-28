@@ -18,10 +18,7 @@ int check_commands(mysh_t *sh)
     for (int i = 0; BUILTIN_COMMANDS[i] != NULL; i++)
     {
         if (strcmp(BUILTIN_COMMANDS[i], sh->args[0]) == 0)
-        {
-            printf("found builtin command\n");
             return BUILTIN_FNS[i](sh);
-        }
     }
     return processes_management(sh);
 }
@@ -51,7 +48,6 @@ int init_shell(mysh_t *sh)
         }
         sh->args = args;
         ret_value = check_commands(sh);
-        // ret_value = processes_management(sh);
         free_tab((void **)args);
     }
     return ret_value;

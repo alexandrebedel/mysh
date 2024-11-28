@@ -33,7 +33,7 @@ char **strip_by(char *line, const char *delimiters);
 /**
  * Returns the size of a 2d array
  */
-int two_d_size(void **tab);
+int tab_len(void **tab);
 
 /**
  * Frees a 2d array

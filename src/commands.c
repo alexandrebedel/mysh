@@ -29,7 +29,7 @@ static int run_commands(mysh_t *sh)
         }
     }
     fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
-    return 127;
+    return 1;
 }
 
 static int waitprocess(pid_t pid)
@@ -52,6 +52,18 @@ static int waitprocess(pid_t pid)
             fprintf(stderr, "Floating exception\n");
             ret = 136;
         }
+        // else if (WIFSIGNALED(status))
+        // {
+        //     printf("tué par le signal %d\n", WTERMSIG(status));
+        // }
+        // else if (WIFSTOPPED(status))
+        // {
+        //     printf("arrêté par le signal %d\n", WSTOPSIG(status));
+        // }
+        // else if (WIFCONTINUED(status))
+        // {
+        //     printf("relancé\n");
+        // }
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     return ret;
 }
