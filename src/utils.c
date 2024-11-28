@@ -7,7 +7,7 @@
 
 char **strip_by(char *line, const char *delimiters)
 {
-    char **copy = strdup(line);
+    char *copy = strdup(line);
     char **args = NULL;
     char *token = strtok(copy, delimiters);
     int j = 0;
@@ -28,11 +28,7 @@ bool display_prompt(void)
 {
     int bytes = write(STDOUT_FILENO, "> ", 2);
 
-    if (bytes == -1)
-    {
-        return (false);
-    }
-    return (true);
+    return !(bytes == -1);
 }
 
 void sigprompt(__attribute__((__unused__)) int sig)

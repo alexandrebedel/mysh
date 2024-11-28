@@ -1,0 +1,8 @@
+services:
+  project-c:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    working_dir: /app/build

@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "minishell.h"
 #include "environment.h"
-#include <strings.h>
+#include <string.h>
 
 char *get_env_var(char **env, char *name)
 {
@@ -17,7 +17,7 @@ char *get_env_var(char **env, char *name)
         {
             ret = strdup(env_var[1]);
         }
-        free_tab(env_var);
+        free_tab((void **)env_var);
     }
     return ret;
 }

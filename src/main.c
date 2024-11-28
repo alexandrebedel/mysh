@@ -21,7 +21,9 @@ static mysh_t init_struct(char **env)
 int main(int argc, char *argv[], char **env)
 {
     mysh_t mysh = init_struct(env);
-    (void)argc, (void)argv;
+    (void)argc;
 
+    // // free_tab(mysh.paths);
+    mysh.bin_name = argv[0];
     return init_shell(&mysh);
 }
