@@ -62,3 +62,6 @@ Thumbs.db
 .lcov
 
 mysh
+
+# Allow root makefile
+!Makefile

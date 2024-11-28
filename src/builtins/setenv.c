@@ -60,11 +60,5 @@ int sh_setenv(mysh_t *sh)
         return 1;
     if (status == 2)
         return dump_env(sh->env);
-    // char *line = get_env_var()
-    // char **args = strip_by()
-    // for (int i = 0; sh->env[i] != NULL; i++)
-    // {
-    //     if (strcmp(sh->env[i]))
-    // }
-    return 0;
+    return set_env_var(&sh->env, sh->args[1], sh->args[2]);
 }

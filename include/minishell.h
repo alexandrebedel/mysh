@@ -8,6 +8,8 @@ typedef struct
     char *bin_name;
     /**
      * Holds all the environments variables
+     *
+     * WARN: Don't forget to free on exit
      */
     char **env;
     /**
