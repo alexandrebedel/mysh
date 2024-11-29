@@ -9,6 +9,7 @@ void free_shell(mysh_t *sh)
     free_tab((void **)sh->paths);
     free_tab((void **)sh->args);
     free_tab((void **)sh->env);
+    free_tab((void **)sh->sep_commands);
     free(sh->line);
 }
 

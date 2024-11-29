@@ -25,7 +25,7 @@ static mysh_t init_struct(char **env)
     return sh;
 }
 
-int main(int argc, char *argv[], char **env)
+int main(int argc, char *argv[], char *env[])
 {
     int ret = 0;
     mysh_t mysh = init_struct(env);

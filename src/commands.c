@@ -5,6 +5,7 @@
 #include "environment.h"
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #if __linux__
 #include <sys/types.h>
@@ -36,7 +37,8 @@ static void run_command(mysh_t *sh, int command_status)
     if (command_status == LOCAL_BIN)
     {
         execve(sh->args[0], sh->args, sh->env);
-        perror("execve");
+        fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
+        free_shell(sh);
         exit(EXIT_FAILURE);
     }
     for (int i = 0; sh->paths[i] != NULL; i++)
@@ -47,7 +49,8 @@ static void run_command(mysh_t *sh, int command_status)
         snprintf(full_path, len, "%s/%s", sh->paths[i], sh->args[0]);
         execve(full_path, sh->args, sh->env);
     }
-    perror("execve");
+    fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
+    free_shell(sh);
     exit(EXIT_FAILURE);
 }
 
@@ -82,7 +85,6 @@ int processes_management(mysh_t *sh)
     pid_t pid;
 
     // get_paths_from_env(sh);
-    // TODO: "Exec format error. Wrong Architecture."
     if ((status = get_bin_type(sh)) == 0)
     {
         fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
