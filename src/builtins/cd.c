@@ -47,7 +47,7 @@ int sh_cd(mysh_t *sh)
         fprintf(stderr, "cd: Too many arguments.\n");
         return BUILTIN_FAILURE;
     }
-    if (size == 1)
+    if (size == 1 || sh->args[1][0] == '~')
         move_home(sh);
     else
     {
