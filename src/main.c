@@ -14,6 +14,7 @@ static mysh_t init_struct(char **env)
         path = strdup("/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin");
     sh.paths = strip_by(path, ":");
     sh.env = duplicate_env(env);
+    sh.line = NULL;
     free(path);
     return sh;
 }

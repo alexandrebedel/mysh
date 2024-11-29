@@ -71,7 +71,6 @@ static int waitprocess(pid_t pid)
 int processes_management(mysh_t *sh)
 {
     pid_t pid = fork();
-    int status = 0;
     int ret = 0;
 
     if (pid == -1)

@@ -3,9 +3,13 @@
 
 #include <stdlib.h>
 
+#define BUILTIN_SUCCESS 0
+#define BUILTIN_FAILURE 1
+
 typedef struct
 {
     char *bin_name;
+    char *line;
     /**
      * Holds all the environments variables
      *

@@ -26,7 +26,8 @@ char **strip_by(char *line, const char *delimiters)
 
 bool display_prompt(void)
 {
-    int bytes = write(STDOUT_FILENO, "> ", 2);
+    char pwd[256];
+    int bytes = dprintf(STDOUT_FILENO, "\033[1m[\033[0m\033[35m%s\033[0m\033[1m]> \033[0m", getcwd(pwd, sizeof(pwd)));
 
     return !(bytes == -1);
 }

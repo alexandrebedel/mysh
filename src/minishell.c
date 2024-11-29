@@ -25,7 +25,6 @@ int check_commands(mysh_t *sh)
 
 int init_shell(mysh_t *sh)
 {
-    char *line = NULL;
     char **args = NULL;
     size_t bufsize = 0;
     int ret_value = 0;
@@ -35,12 +34,11 @@ int init_shell(mysh_t *sh)
     {
         if (isatty(0))
             display_prompt();
-        if (getline(&line, &bufsize, stdin) == -1)
+        if (getline(&sh->line, &bufsize, stdin) == -1)
             return ret_value;
-        if (line == NULL || strcmp(line, "") == 0)
+        if (sh->line == NULL || strcmp(sh->line, "") == 0)
             continue;
-        args = strip_by(line, DELIMITERS);
-
+        args = strip_by(sh->line, DELIMITERS);
         if (args[0] == NULL)
         {
             free_tab((void **)args);

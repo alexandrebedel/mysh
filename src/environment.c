@@ -46,31 +46,31 @@ char *get_env_var(char **env, char *name)
 int set_env_var(char ***env, char *name, char *value)
 {
     int size = tab_len((void **)*env);
-    char *new_var = malloc(sizeof(char) * (strlen(name) + strlen(value) + 2));
+    char *new_var = malloc(sizeof(char) * (strlen(name) + strlen(value ? value : "") + 2));
     char **copy;
 
     if (!new_var)
-        return 1;
-    sprintf(new_var, "%s=%s", name, value);
+        return BUILTIN_FAILURE;
+    sprintf(new_var, "%s=%s", name, value ? value : "");
     for (int i = 0; (*env)[i] != NULL; i++)
     {
         if (strncmp((*env)[i], name, strlen(name)) == 0 && (*env)[i][strlen(name)] == '=')
         {
             free((*env)[i]);
             (*env)[i] = new_var;
-            return 0;
+            return BUILTIN_SUCCESS;
         }
     }
     copy = realloc(*env, sizeof(char *) * (size + 2));
     if (!copy)
     {
         free(new_var);
-        return 1;
+        return BUILTIN_FAILURE;
     }
     *env = copy;
     (*env)[size] = new_var;
     (*env)[size + 1] = NULL;
-    return 0;
+    return BUILTIN_SUCCESS;
 }
 
 int unset_env_var(char ***env, char *name)
@@ -80,7 +80,7 @@ int unset_env_var(char ***env, char *name)
     char **copy;
 
     if (!var_exists(*env, name))
-        return 0;
+        return BUILTIN_SUCCESS;
     copy = malloc(sizeof(char *) * tab_len((void **)*env));
     for (; (*env)[i] != NULL; i++)
     {
@@ -89,9 +89,9 @@ int unset_env_var(char ***env, char *name)
         copy[j++] = strdup((*env)[i]);
     }
     copy[j] = NULL;
-    free_tab(*env);
+    free_tab((void **)*env);
     *env = copy;
-    return 0;
+    return BUILTIN_SUCCESS;
 }
 
 int dump_env(char **env)
@@ -100,5 +100,5 @@ int dump_env(char **env)
     {
         printf("%s\n", env[i]);
     }
-    return 0;
+    return BUILTIN_SUCCESS;
 }
