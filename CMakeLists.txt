@@ -11,7 +11,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -fsanitize=address -g")
 
 include_directories(include)
 
-file(GLOB SOURCES "src/**.c" "src/builtins/*.c")
+file(GLOB SOURCES "src/**.c" "src/builtins/*.c" "src/utils/*.c")
 
 add_executable(mysh ${SOURCES})
 

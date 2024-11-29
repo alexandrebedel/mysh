@@ -35,6 +35,12 @@ char **strip_by(char *line, const char *delimiters);
  */
 int tab_len(void **tab);
 
+// Memory related functions
+//
+//
+void memory_error(void);
+void *safe_malloc(size_t size);
+char *safe_strdup(const char *str);
 /**
  * Frees a 2d array
  */

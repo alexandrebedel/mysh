@@ -2,7 +2,7 @@ CC			=	gcc
 
 NAME 		=	mysh
 
-SRC			=	$(wildcard src/*.c) $(wildcard src/builtins/*.c)
+SRC			=	$(wildcard src/*.c) $(wildcard src/builtins/*.c) $(wildcard src/utils/*.c)
 
 OBJ			=	$(SRC:.c=.o)
 

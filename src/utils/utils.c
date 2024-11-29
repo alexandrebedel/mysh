@@ -7,7 +7,7 @@
 
 char **strip_by(char *line, const char *delimiters)
 {
-    char *copy = strdup(line);
+    char *copy = safe_strdup(line);
     char **args = NULL;
     char *token = strtok(copy, delimiters);
     int j = 0;
@@ -15,7 +15,7 @@ char **strip_by(char *line, const char *delimiters)
     while (token != NULL)
     {
         args = realloc(args, (j + 1) * sizeof(char *));
-        args[j++] = strdup(token);
+        args[j++] = safe_strdup(token);
         token = strtok(NULL, delimiters);
     }
     args = realloc(args, (j + 1) * sizeof(char *));
@@ -51,11 +51,4 @@ int tab_len(void **tab)
     for (; tab[i] != NULL; i++)
         ;
     return i;
-}
-
-void free_tab(void **tab)
-{
-    for (int i = 0; tab[i] != NULL; i++)
-        free(tab[i]);
-    free(tab);
 }
