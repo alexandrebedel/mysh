@@ -2,6 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
+#include "minishell.h"
+
+void free_shell(mysh_t *sh)
+{
+    free_tab((void **)sh->paths);
+    free_tab((void **)sh->args);
+    free_tab((void **)sh->env);
+    free(sh->line);
+}
 
 void memory_error(void)
 {
@@ -29,7 +38,12 @@ void *safe_malloc(size_t size)
 
 void free_tab(void **tab)
 {
+    if (tab == NULL)
+        return;
     for (int i = 0; tab[i] != NULL; i++)
-        free(tab[i]);
+    {
+        if (tab[i] != NULL)
+            free(tab[i]);
+    }
     free(tab);
 }

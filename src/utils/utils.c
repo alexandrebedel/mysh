@@ -5,7 +5,7 @@
 #include <string.h>
 #include "utils.h"
 
-char **strip_by(char *line, const char *delimiters)
+char **split_by(char *line, const char *delimiters)
 {
     char *copy = safe_strdup(line);
     char **args = NULL;

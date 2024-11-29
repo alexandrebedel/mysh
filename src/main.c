@@ -5,14 +5,20 @@
 #include "utils.h"
 #include "environment.h"
 
+static void free_all(mysh_t sh)
+{
+    free_tab((void **)sh.paths);
+    free_tab((void **)sh.env);
+    free(sh.line);
+}
+
 static mysh_t init_struct(char **env)
 {
     char *path = get_env_var(env, "PATH");
     mysh_t sh;
 
-    if (path == NULL)
-        path = safe_strdup("/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin");
-    sh.paths = strip_by(path, ":");
+    // Should the paths be handled by the PATH variable itself ?
+    sh.paths = split_by(path, ":");
     sh.env = duplicate_env(env);
     sh.line = NULL;
     free(path);
@@ -21,10 +27,12 @@ static mysh_t init_struct(char **env)
 
 int main(int argc, char *argv[], char **env)
 {
+    int ret = 0;
     mysh_t mysh = init_struct(env);
     (void)argc;
 
-    // // free_tab(mysh.paths);
     mysh.bin_name = argv[0];
-    return init_shell(&mysh);
+    ret = run_shell(&mysh);
+    free_all(mysh);
+    return ret;
 }

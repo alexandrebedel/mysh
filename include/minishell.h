@@ -24,12 +24,16 @@ typedef struct
      */
     char **paths;
     char **args;
+    /**
+     * TODO: documentation
+     */
+    char **sep_commands;
 } mysh_t;
 
 /**
  * Initializes the shell
  */
-int init_shell(mysh_t *mysh);
+int run_shell(mysh_t *mysh);
 
 int processes_management(mysh_t *sh);
 

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "minishell.h"
+#include "utils.h"
+#include "environment.h"
 #include <unistd.h>
 #include <string.h>
 
@@ -29,7 +31,7 @@ static int get_bin_type(mysh_t *sh)
     return NOTFND_BIN;
 }
 
-static void run_commands(mysh_t *sh, int command_status)
+static void run_command(mysh_t *sh, int command_status)
 {
     if (command_status == LOCAL_BIN)
     {
@@ -79,6 +81,8 @@ int processes_management(mysh_t *sh)
     int status = 0;
     pid_t pid;
 
+    // get_paths_from_env(sh);
+    // TODO: "Exec format error. Wrong Architecture."
     if ((status = get_bin_type(sh)) == 0)
     {
         fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
@@ -91,7 +95,7 @@ int processes_management(mysh_t *sh)
         return EXIT_FAILURE;
     }
     else if (pid == 0)
-        run_commands(sh, status);
+        run_command(sh, status);
     else
         ret = waitprocess(pid);
     return ret;

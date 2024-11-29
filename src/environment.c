@@ -32,7 +32,7 @@ char *get_env_var(char **env, char *name)
 
     for (int i = 0; env[i] != NULL; i++)
     {
-        char **env_var = strip_by(env[i], "=");
+        char **env_var = split_by(env[i], "=");
 
         if (strcmp(env_var[0], name) == 0)
             ret = safe_strdup(env_var[1]);

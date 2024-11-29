@@ -1,6 +1,7 @@
 #if !defined(UTILS_H)
 #define UTILS_H
 
+#include "minishell.h"
 #include <stdbool.h>
 
 /**
@@ -28,7 +29,7 @@ void display_char_tab(char **tab);
  *
  * TODO: Error handling
  */
-char **strip_by(char *line, const char *delimiters);
+char **split_by(char *line, const char *delimiters);
 
 /**
  * Returns the size of a 2d array
@@ -37,7 +38,11 @@ int tab_len(void **tab);
 
 // Memory related functions
 //
-//
+
+/**
+ * Exits the program and display the error on stderr
+ */
+void free_shell(mysh_t *sh);
 void memory_error(void);
 void *safe_malloc(size_t size);
 char *safe_strdup(const char *str);

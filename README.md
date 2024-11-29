@@ -9,7 +9,7 @@ Un simple make fonctionnera, cmake est aussi configuré. Des script d'installati
 # Roadmap
 
 - [ ] Builtins
-  - [ ] cd
+  - [x] cd
   - [x] env
   - [x] setenv
   - [x] unsetenv
