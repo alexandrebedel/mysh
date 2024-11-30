@@ -55,7 +55,7 @@ static int move_to(mysh_t *sh, char *directory)
 
 int sh_cd(mysh_t *sh)
 {
-    int size = tab_len((void **)sh->args);
+    int size = tablen((void **)sh->args);
     int ret = 0;
 
     if (size > 3)

@@ -30,7 +30,7 @@ static bool is_str_alnum(char *str)
  */
 static int check_args(mysh_t *sh)
 {
-    int len = tab_len((void **)sh->args);
+    int len = tablen((void **)sh->args);
 
     if (len == 1)
         return 2;

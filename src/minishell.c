@@ -34,14 +34,14 @@ static int check_separators(mysh_t *sh)
         args = split_by(sh->sep_commands[i], DELIMITERS);
         if (args[0] == NULL)
         {
-            free_tab((void **)args);
+            freetab((void **)args);
             continue;
         }
         sh->args = args;
         ret = check_commands(sh);
-        free_tab((void **)args);
+        freetab((void **)args);
     }
-    free_tab((void **)sh->sep_commands);
+    freetab((void **)sh->sep_commands);
     return ret;
 }
 

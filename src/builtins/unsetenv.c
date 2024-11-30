@@ -7,7 +7,7 @@
 
 int sh_unsetenv(mysh_t *sh)
 {
-    int size = tab_len((void **)sh->args);
+    int size = tablen((void **)sh->args);
 
     if (size == 1)
     {

@@ -34,7 +34,7 @@ char **split_by(char *line, const char *delimiters);
 /**
  * Returns the size of a 2d array
  */
-int tab_len(void **tab);
+int tablen(void **tab);
 
 // Memory related functions
 //
@@ -49,6 +49,6 @@ char *safe_strdup(const char *str);
 /**
  * Frees a 2d array
  */
-void free_tab(void **tab);
+void freetab(void **tab);
 
 #endif // UTILS_H

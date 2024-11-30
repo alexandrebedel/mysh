@@ -44,7 +44,7 @@ void display_char_tab(char **tab)
         printf("Element %d: [%s]\n", i, tab[i]);
 }
 
-int tab_len(void **tab)
+int tablen(void **tab)
 {
     int i = 0;
 

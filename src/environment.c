@@ -17,7 +17,7 @@ static bool var_exists(char **env, char *name)
 
 char **duplicate_env(char **env)
 {
-    char **copy = safe_malloc(sizeof(char *) * (tab_len((void **)env) + 1));
+    char **copy = safe_malloc(sizeof(char *) * (tablen((void **)env) + 1));
     int i = 0;
 
     for (; env[i] != NULL; i++)
@@ -36,14 +36,14 @@ char *get_env_var(char **env, char *name)
 
         if (strcmp(env_var[0], name) == 0)
             ret = safe_strdup(env_var[1]);
-        free_tab((void **)env_var);
+        freetab((void **)env_var);
     }
     return ret;
 }
 
 int set_env_var(char ***env, char *name, char *value)
 {
-    int size = tab_len((void **)*env);
+    int size = tablen((void **)*env);
     char *new_var = safe_malloc(sizeof(char) * (strlen(name) + strlen(value ? value : "") + 2));
     char **copy;
 
@@ -79,7 +79,7 @@ int unset_env_var(char ***env, char *name)
 
     if (!var_exists(*env, name))
         return BUILTIN_SUCCESS;
-    copy = safe_malloc(sizeof(char *) * tab_len((void **)*env));
+    copy = safe_malloc(sizeof(char *) * tablen((void **)*env));
     for (; (*env)[i] != NULL; i++)
     {
         if (strncmp((*env)[i], name, strlen(name)) == 0 && (*env)[i][strlen(name)] == '=')
@@ -87,7 +87,7 @@ int unset_env_var(char ***env, char *name)
         copy[j++] = safe_strdup((*env)[i]);
     }
     copy[j] = NULL;
-    free_tab((void **)*env);
+    freetab((void **)*env);
     *env = copy;
     return BUILTIN_SUCCESS;
 }

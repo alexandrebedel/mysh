@@ -7,8 +7,8 @@
 
 static void free_all(mysh_t sh)
 {
-    free_tab((void **)sh.paths);
-    free_tab((void **)sh.env);
+    freetab((void **)sh.paths);
+    freetab((void **)sh.env);
     free(sh.line);
 }
 

@@ -6,10 +6,10 @@
 
 void free_shell(mysh_t *sh)
 {
-    free_tab((void **)sh->paths);
-    free_tab((void **)sh->args);
-    free_tab((void **)sh->env);
-    free_tab((void **)sh->sep_commands);
+    freetab((void **)sh->paths);
+    freetab((void **)sh->args);
+    freetab((void **)sh->env);
+    freetab((void **)sh->sep_commands);
     free(sh->line);
 }
 
@@ -37,7 +37,7 @@ void *safe_malloc(size_t size)
     return ptr;
 }
 
-void free_tab(void **tab)
+void freetab(void **tab)
 {
     if (tab == NULL)
         return;
