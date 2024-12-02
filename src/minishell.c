@@ -44,7 +44,6 @@ static char **eval_variables(mysh_t *sh, char **args)
 {
     for (int i = 0; args[i] != NULL; i++)
     {
-        // TODO: Check if isalnum is enough
         if (args[i][0] == '$' && isalnum(args[i][1]))
         {
             char *value = get_env_var(sh->env, &(args[i])[1]);

@@ -8,16 +8,12 @@
 
 static bool is_str_alnum(char *str)
 {
-    bool is_alnum = true;
-
     for (int i = 0; str[i] != '\0'; i++)
     {
-        if (!isalnum(str[i]))
-        {
-            is_alnum = false;
-        }
+        if (str[i] != '_' && !isalnum(str[i]))
+            return false;
     }
-    return is_alnum;
+    return true;
 }
 
 /**

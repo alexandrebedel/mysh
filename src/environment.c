@@ -28,17 +28,19 @@ char **duplicate_env(char **env)
 
 char *get_env_var(char **env, char *name)
 {
-    char *ret = NULL;
+    int len = 0;
 
     for (int i = 0; env[i] != NULL; i++)
     {
-        char **env_var = split_by(env[i], "=");
+        char *value = strchr(env[i], '=');
 
-        if (strcmp(env_var[0], name) == 0)
-            ret = safe_strdup(env_var[1]);
-        freetab((void **)env_var);
+        if (!value)
+            continue;
+        len = value - env[i];
+        if (strncmp(env[i], name, len) == 0 && name[len] == '\0')
+            return safe_strdup(&value[1]);
     }
-    return ret;
+    return NULL;
 }
 
 int set_env_var(char ***env, char *name, char *value)
