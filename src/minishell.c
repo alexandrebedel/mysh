@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 #include "minishell.h"
 #include "utils.h"
 #include "builtins.h"
+#include "environment.h"
 
 #if __linux__
 #include <signal.h>
@@ -23,6 +25,42 @@ static int check_commands(mysh_t *sh)
     return processes_management(sh);
 }
 
+// static int check_pipes(mysh_t *sh, char *line)
+// {
+//     char **pipe_cmds = split_by(line, "|");
+
+//     for (int i = 0; pipe_cmds[i] != NULL; i++)
+//     {
+//     }
+//     freetab(pipe_cmds);
+//     return 0;
+// }
+
+/**
+ * Checks for arguments starting with `$` in the command line
+ * and replaces them with their environment variable values.
+ */
+static char **eval_variables(mysh_t *sh, char **args)
+{
+    for (int i = 0; args[i] != NULL; i++)
+    {
+        // TODO: Check if isalnum is enough
+        if (args[i][0] == '$' && isalnum(args[i][1]))
+        {
+            char *value = get_env_var(sh->env, &(args[i])[1]);
+
+            if (value == NULL)
+                return args;
+            free(args[i]);
+            args[i] = value;
+        }
+    }
+    return args;
+}
+
+/**
+ * Splits the input line by `;` and processes each command.
+ */
 static int check_separators(mysh_t *sh)
 {
     char **args = NULL;
@@ -31,13 +69,14 @@ static int check_separators(mysh_t *sh)
     sh->sep_commands = split_by(sh->line, ";");
     for (int i = 0; sh->sep_commands[i] != NULL; i++)
     {
+        // check_pipes(sh, sh->sep_commands[i]);
         args = split_by(sh->sep_commands[i], DELIMITERS);
         if (args[0] == NULL)
         {
             freetab((void **)args);
             continue;
         }
-        sh->args = args;
+        sh->args = eval_variables(sh, args);
         ret = check_commands(sh);
         freetab((void **)args);
     }

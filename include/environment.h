@@ -22,7 +22,23 @@ char *get_env_var(char **env, char *name);
  */
 int dump_env(char **env);
 
+/**
+ * Mutates the given environment by the variable
+ * name and the provided value
+ *
+ * @returns A success or failure code
+ */
 int set_env_var(char ***env, char *name, char *value);
+
+/**
+ * Removes from the given environment
+ * the matching variable
+ *
+ * It will return a success code even
+ * if the variable does not exist
+ *
+ * @returns A success or failure code
+ */
 int unset_env_var(char ***env, char *name);
 
 #endif // ENVIRONMENT_H

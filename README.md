@@ -15,6 +15,7 @@ Un simple make fonctionnera, cmake est aussi configuré. Des script d'installati
   - [x] unsetenv
   - [x] exit
   - [ ] alias
+- [x] Environment variables evaluation
 - [x] Separators
 - [ ] Redirections
 - [ ] Pipes

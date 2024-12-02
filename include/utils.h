@@ -26,8 +26,6 @@ void display_char_tab(char **tab);
 /**
  * Returns a `char **` of the parsed line
  * matching the given delimiter.
- *
- * TODO: Error handling
  */
 char **split_by(char *line, const char *delimiters);
 
@@ -43,9 +41,16 @@ int tablen(void **tab);
  * Exits the program and display the error on stderr
  */
 void free_shell(mysh_t *sh);
+
+/**
+ * Displays a memory error and exits
+ */
 void memory_error(void);
+
 void *safe_malloc(size_t size);
+
 char *safe_strdup(const char *str);
+
 /**
  * Frees a 2d array
  */
