@@ -6,6 +6,8 @@
 #define BUILTIN_SUCCESS 0
 #define BUILTIN_FAILURE 1
 
+#define NOPIPES -1
+
 typedef struct
 {
     char *bin_name;
@@ -44,5 +46,12 @@ int sh_cd(mysh_t *sh);
 int sh_setenv(mysh_t *sh);
 int sh_unsetenv(mysh_t *sh);
 int sh_env(mysh_t *sh);
+
+char **eval_variables(mysh_t *sh, char **args);
+int check_separators(mysh_t *sh);
+int check_commands(mysh_t *sh);
+
+// Pipes related functions
+int check_pipes(mysh_t *sh, char *line);
 
 #endif // MINISHELL_H
