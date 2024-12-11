@@ -42,6 +42,20 @@ static int pipe_checks(int pipesnb, int *pipefds, char **pipe_cmds)
     return EXIT_SUCCESS;
 }
 
+static int redirecting_fds(int i, char **pipe_cmds, int *pipefds, int pipesnb)
+{
+    if (i != 0)
+    {
+        dup2(pipefds[(i - 1) * 2], STDIN_FILENO);
+    }
+    if (pipe_cmds[i + 1] != NULL)
+    {
+        dup2(pipefds[i * 2 + 1], STDOUT_FILENO);
+    }
+    for (int j = 0; j < (2 * pipesnb); j++)
+        close(pipefds[j]);
+}
+
 static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pipesnb)
 {
     char **args = NULL;
@@ -56,19 +70,9 @@ static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pip
             perror("fork");
             return EXIT_FAILURE;
         }
-
         if (pid == 0)
         {
-            // Redirect input if not the first command
-            if (i != 0)
-                dup2(pipefds[(i - 1) * 2], STDIN_FILENO);
-            // Redirect output if not the last command
-            if (pipe_cmds[i + 1] != NULL)
-                dup2(pipefds[i * 2 + 1], STDOUT_FILENO);
-
-            for (int j = 0; j < (2 * pipesnb); j++)
-                close(pipefds[j]);
-
+            redirecting_fds(i, pipe_cmds, pipefds, pipesnb);
             args = split_by(pipe_cmds[i], DELIMITERS);
             if (args[0] == NULL)
             {
@@ -78,6 +82,7 @@ static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pip
             sh->args = eval_variables(sh, args);
             res = check_commands(sh);
             free_shell(sh);
+            freetab((void **)pipe_cmds);
             exit(EXIT_FAILURE);
         }
     }
