@@ -2,25 +2,43 @@ CC			=	gcc
 
 NAME 		=	mysh
 
-SRC			=	$(wildcard src/*.c) $(wildcard src/builtins/*.c) $(wildcard src/utils/*.c)
+SRC_DIR		=	src
+BUILD_DIR	=	obj
+INCLUDE_DIR =	include
 
-OBJ			=	$(SRC:.c=.o)
+SRC			=	$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/builtins/*.c) $(wildcard $(SRC_DIR)/utils/*.c)
+OBJ			=	$(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
-CFLAGS		=	-W -Wall -Wextra -g3
+# Flags généraux
+CFLAGS 		=	-W -Wall -Wextra -Wshadow -Wconversion -pedantic
+CPPFLAGS 	= 	-I$(INCLUDE_DIR)
 
-CPPFLAGS 	= 	-I./include/
+# Debug and release flags
+# https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+CFLAGS_RELEASE	=	-O2
+CFLAGS_DEBUG	=	-g3 -O0
 
 all: $(NAME)
 
-$(NAME): build $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) $(LIB)
+debug: CFLAGS += $(CFLAGS_DEBUG)
+debug: re
+
+release: CFLAGS += $(CFLAGS_RELEASE)
+release: re
+
+$(NAME): $(OBJ)
+	$(CC) $(OBJ) -o $(NAME)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-		rm -f $(NAME)
+	rm -rf $(BUILD_DIR)
 
-fclean:	clean
-		rm -f $(OBJ)
+fclean: clean
+	rm -f $(NAME)
 
-re:		fclean all
+re: fclean all
 
-.PHONY:		all clean fclean re
+.PHONY: all debug release clean fclean re

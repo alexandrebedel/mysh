@@ -10,7 +10,8 @@ void free_shell(mysh_t *sh)
     freetab((void **)sh->args);
     freetab((void **)sh->env);
     freetab((void **)sh->sep_commands);
-    free(sh->line);
+    if (sh->line)
+        free(sh->line);
 }
 
 void memory_error(void)

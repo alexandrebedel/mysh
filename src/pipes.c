@@ -6,6 +6,8 @@
 #include "minishell.h"
 #include "environment.h"
 #include "utils.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 
 static const char *DELIMITERS = " \n\t";
 
@@ -75,9 +77,7 @@ static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pip
             }
             sh->args = eval_variables(sh, args);
             res = check_commands(sh);
-            freetab((void **)args);
-            freetab((void **)pipe_cmds);
-            // free_shell(sh);
+            free_shell(sh);
             exit(EXIT_FAILURE);
         }
     }

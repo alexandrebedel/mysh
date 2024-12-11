@@ -4,6 +4,7 @@
 #include <strings.h>
 #include <string.h>
 #include "utils.h"
+#include "environment.h"
 
 char **split_by(char *line, const char *delimiters)
 {
@@ -24,7 +25,7 @@ char **split_by(char *line, const char *delimiters)
     return args;
 }
 
-bool display_prompt(void)
+bool display_prompt()
 {
     char pwd[256];
     int bytes = dprintf(STDOUT_FILENO, "\033[1m[\033[0m\033[35m%s\033[0m\033[1m]> \033[0m", getcwd(pwd, sizeof(pwd)));
