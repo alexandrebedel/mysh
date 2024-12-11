@@ -24,7 +24,7 @@ static int pipe_checks(int pipesnb, int *pipefds, char **pipe_cmds)
 {
     if (pipesnb == 0)
         return NOPIPES;
-    if ((pipesnb + 1) != tablen(pipe_cmds))
+    if ((pipesnb + 1) != tablen((void **)pipe_cmds))
     {
         fprintf(stderr, "Invalid null command.\n");
         return EXIT_FAILURE;
@@ -43,6 +43,7 @@ static int pipe_checks(int pipesnb, int *pipefds, char **pipe_cmds)
 static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pipesnb)
 {
     char **args = NULL;
+    int res = 0;
     pid_t pid;
 
     for (int i = 0; pipe_cmds[i] != NULL; i++)
@@ -73,13 +74,14 @@ static int process_pipe_cmds(mysh_t *sh, char **pipe_cmds, int *pipefds, int pip
                 continue;
             }
             sh->args = eval_variables(sh, args);
-            printf("got res %d", check_commands(sh));
+            res = check_commands(sh);
             freetab((void **)args);
-            freetab(pipe_cmds);
-            free_shell(sh);
+            freetab((void **)pipe_cmds);
+            // free_shell(sh);
             exit(EXIT_FAILURE);
         }
     }
+    return res;
 }
 
 int check_pipes(mysh_t *sh, char *line)
@@ -88,13 +90,10 @@ int check_pipes(mysh_t *sh, char *line)
     int pipes_nb = count_pipes(line);
     char **pipe_cmds = split_by(line, "|\n");
     int pipefds[2 * pipes_nb];
-    char **args = NULL;
-
-    printf("pipenb %d %d\n", pipes_nb, tablen(pipe_cmds));
 
     if ((pipe_res = pipe_checks(pipes_nb, pipefds, pipe_cmds)) != EXIT_SUCCESS)
     {
-        freetab(pipe_cmds);
+        freetab((void **)pipe_cmds);
         return pipe_res;
     }
     process_pipe_cmds(sh, pipe_cmds, pipefds, pipes_nb);
@@ -102,6 +101,6 @@ int check_pipes(mysh_t *sh, char *line)
         close(pipefds[i]);
     for (int i = 0; i <= pipes_nb; i++)
         wait(NULL);
-    freetab(pipe_cmds);
+    freetab((void **)pipe_cmds);
     return 0;
 }
