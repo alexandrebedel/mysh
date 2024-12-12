@@ -17,8 +17,8 @@ Un simple make fonctionnera, cmake est aussi configuré. Des script d'installati
   - [ ] alias
 - [x] Variables evaluation (environment, $?)
 - [x] Separators
+- [x] Pipes
 - [ ] Redirections
-- [ ] Pipes
 
 # How to use the tester
 
