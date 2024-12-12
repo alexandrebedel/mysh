@@ -137,7 +137,6 @@ int check_pipes(mysh_t *sh, char *line)
     for (int i = 0; i < 2 * pipes_nb; i++)
         close(pipefds[i]);
     pipe_res = wait_pipes(pipes_nb);
-    freetab((void **)pipe_cmds);
-    printf("Pipe got %d\n", pipe_res);
+    sh->exit_status = pipe_res;
     return pipe_res;
 }

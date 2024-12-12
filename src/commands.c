@@ -80,18 +80,21 @@ int processes_management(mysh_t *sh)
     int status = 0;
     pid_t pid;
 
-    if ((status = get_bin_type(sh)) == 0)
-    {
-        fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
-        return EXIT_FAILURE;
-    }
     if ((pid = fork()) == -1)
     {
         perror("fork");
         return EXIT_FAILURE;
     }
     else if (pid == 0)
+    {
+        if ((status = get_bin_type(sh)) == 0)
+        {
+            fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
+            free_shell(sh);
+            exit(EXIT_FAILURE);
+        }
         run_command(sh, status);
+    }
     else
         ret = waitprocess(pid);
     return ret;
@@ -99,7 +102,7 @@ int processes_management(mysh_t *sh)
 
 int check_commands(mysh_t *sh)
 {
-    int exit_status;
+    int exit_status = 0;
 
     for (int i = 0; BUILTIN_COMMANDS[i] != NULL; i++)
     {
@@ -112,6 +115,5 @@ int check_commands(mysh_t *sh)
     }
     exit_status = processes_management(sh);
     sh->exit_status = exit_status;
-    printf("Setting exit status to %d\n", sh->exit_status);
     return exit_status;
 }

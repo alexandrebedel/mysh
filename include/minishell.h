@@ -63,7 +63,10 @@ int check_separators(mysh_t *sh);
 int check_commands(mysh_t *sh);
 int processes_management(mysh_t *sh);
 
-// Pipes related functions
+/**
+ * Evaluates the pipes from the provided
+ * CL and sets the last shell exit_status code
+ */
 int check_pipes(mysh_t *sh, char *line);
 
 #endif // MINISHELL_H
