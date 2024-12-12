@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include "builtins.h"
 
 #if __linux__
 #include <sys/types.h>
@@ -64,15 +65,10 @@ static int waitprocess(pid_t pid)
         waitpid(pid, &status, WUNTRACED | WCONTINUED);
         if (WIFEXITED(status))
             ret = WEXITSTATUS(status);
-        if (WTERMSIG(status) == SIGSEGV)
+        if (WTERMSIG(status) == SIGSEGV || WTERMSIG(status) == SIGFPE)
         {
-            fprintf(stderr, "Segmentation fault\n");
-            ret = 139;
-        }
-        else if (WTERMSIG(status) == SIGFPE)
-        {
-            fprintf(stderr, "Floating exception\n");
-            ret = 136;
+            fprintf(stderr, WTERMSIG(status) == SIGSEGV ? "Segmentation fault\n" : "Floating exception\n");
+            ret = SIGNAL_EXIT(WTERMSIG(status));
         }
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     return ret;
@@ -84,14 +80,12 @@ int processes_management(mysh_t *sh)
     int status = 0;
     pid_t pid;
 
-    // get_paths_from_env(sh);
     if ((status = get_bin_type(sh)) == 0)
     {
         fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
         return EXIT_FAILURE;
     }
-    pid = fork();
-    if (pid == -1)
+    if ((pid = fork()) == -1)
     {
         perror("fork");
         return EXIT_FAILURE;
@@ -101,4 +95,23 @@ int processes_management(mysh_t *sh)
     else
         ret = waitprocess(pid);
     return ret;
+}
+
+int check_commands(mysh_t *sh)
+{
+    int exit_status;
+
+    for (int i = 0; BUILTIN_COMMANDS[i] != NULL; i++)
+    {
+        if (strcmp(BUILTIN_COMMANDS[i], sh->args[0]) == 0)
+        {
+            exit_status = BUILTIN_FNS[i](sh);
+            sh->exit_status = exit_status;
+            return exit_status;
+        }
+    }
+    exit_status = processes_management(sh);
+    sh->exit_status = exit_status;
+    printf("Setting exit status to %d\n", sh->exit_status);
+    return exit_status;
 }

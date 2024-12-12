@@ -2,6 +2,9 @@
 #define MINISHELL_H
 
 #include <stdlib.h>
+#include <stdbool.h>
+
+#define SIGNAL_EXIT(sigvalue) (128 + sigvalue)
 
 #define BUILTIN_SUCCESS 0
 #define BUILTIN_FAILURE 1
@@ -10,7 +13,6 @@
 
 typedef struct
 {
-    char *bin_name;
     char *line;
     /**
      * Holds all the environments variables
@@ -27,17 +29,19 @@ typedef struct
     char **paths;
     char **args;
     /**
-     * TODO: documentation
+     * Hold the commands separated by `;`
      */
     char **sep_commands;
+    /**
+     * Last command exit status
+     */
+    int exit_status;
 } mysh_t;
 
 /**
  * Initializes the shell
  */
 int run_shell(mysh_t *mysh);
-
-int processes_management(mysh_t *sh);
 
 // Shell builtin function definition
 //
@@ -49,7 +53,15 @@ int sh_env(mysh_t *sh);
 
 char **eval_variables(mysh_t *sh, char **args);
 int check_separators(mysh_t *sh);
+
+// Shell commands functions definition
+//
+/**
+ * Checks for builtins and sets the
+ * last shell exit_status code
+ */
 int check_commands(mysh_t *sh);
+int processes_management(mysh_t *sh);
 
 // Pipes related functions
 int check_pipes(mysh_t *sh, char *line);

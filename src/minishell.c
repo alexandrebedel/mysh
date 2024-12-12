@@ -6,7 +6,6 @@
 #include <ctype.h>
 #include "minishell.h"
 #include "utils.h"
-#include "builtins.h"
 #include "environment.h"
 
 #if __linux__
@@ -14,16 +13,6 @@
 #endif
 
 static const char *DELIMITERS = " \n\t";
-
-int check_commands(mysh_t *sh)
-{
-    for (int i = 0; BUILTIN_COMMANDS[i] != NULL; i++)
-    {
-        if (strcmp(BUILTIN_COMMANDS[i], sh->args[0]) == 0)
-            return BUILTIN_FNS[i](sh);
-    }
-    return processes_management(sh);
-}
 
 /**
  * Checks for arguments starting with `$` in the command line
@@ -33,7 +22,18 @@ char **eval_variables(mysh_t *sh, char **args)
 {
     for (int i = 0; args[i] != NULL; i++)
     {
-        if (args[i][0] == '$' && isalnum(args[i][1]))
+        if (args[i][0] == '$' && args[i][1] == '?')
+        {
+            char *value = safe_malloc(4);
+
+            if (snprintf(value, 4, "%d", sh->exit_status) < 0)
+            {
+                free(value);
+                return args;
+            }
+            args[i] = value;
+        }
+        else if (args[i][0] == '$' && isalnum(args[i][1]))
         {
             char *value = get_env_var(sh->env, &(args[i])[1]);
 
@@ -55,13 +55,13 @@ int check_separators(mysh_t *sh)
 {
     char **args = NULL;
     int ret = 0;
+    int pipes_ran = 0;
 
     sh->sep_commands = split_by(sh->line, ";");
     for (int i = 0; sh->sep_commands[i] != NULL; i++)
     {
-        if (check_pipes(sh, sh->sep_commands[i]) != NOPIPES)
-        {
-        }
+        if ((pipes_ran = check_pipes(sh, sh->sep_commands[i])) != NOPIPES)
+            ret = pipes_ran;
         else
         {
             args = split_by(sh->sep_commands[i], DELIMITERS);
@@ -74,7 +74,6 @@ int check_separators(mysh_t *sh)
             ret = check_commands(sh);
             freetab((void **)args);
         }
-        // check_pipes(sh, sh->sep_commands[i]);
     }
     freetab((void **)sh->sep_commands);
     return ret;

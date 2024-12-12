@@ -21,6 +21,7 @@ static mysh_t init_struct(char **env)
     sh.paths = split_by(path, ":");
     sh.env = duplicate_env(env);
     sh.line = NULL;
+    sh.exit_status = 0;
     free(path);
     return sh;
 }
@@ -31,7 +32,6 @@ int main(int argc, char *argv[], char *env[])
     mysh_t mysh = init_struct(env);
     (void)argc;
 
-    mysh.bin_name = argv[0];
     ret = run_shell(&mysh);
     free_all(mysh);
     return ret;
