@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "minishell.h"
-#include "utils.h"
+#include "utils/utils.h"
+#include "utils/memory.h"
 #include "environment.h"
 
 static void free_all(mysh_t sh)

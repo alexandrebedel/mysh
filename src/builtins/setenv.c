@@ -1,6 +1,6 @@
 #include "minishell.h"
 #include <string.h>
-#include "utils.h"
+#include "utils/utils.h"
 #include "environment.h"
 #include <stdio.h>
 #include <ctype.h>

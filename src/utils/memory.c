@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "utils.h"
+#include "utils/memory.h"
 #include "minishell.h"
 
 void free_shell(mysh_t *sh)

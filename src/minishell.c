@@ -5,7 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "minishell.h"
-#include "utils.h"
+#include "utils/memory.h"
+#include "utils/utils.h"
+#include "prompt.h"
 #include "environment.h"
 
 #if __linux__

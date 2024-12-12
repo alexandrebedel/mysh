@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "utils.h"
+#include "utils/memory.h"
+#include "utils/utils.h"
 #include "minishell.h"
 #include "environment.h"
 #include <string.h>

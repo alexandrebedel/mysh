@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include "minishell.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "environment.h"
 
 #if __linux__

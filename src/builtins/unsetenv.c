@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "minishell.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "environment.h"
 
 int sh_unsetenv(mysh_t *sh)

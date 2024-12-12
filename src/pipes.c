@@ -5,7 +5,8 @@
 #include <string.h>
 #include "minishell.h"
 #include "environment.h"
-#include "utils.h"
+#include "utils/utils.h"
+#include "utils/memory.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -137,5 +138,6 @@ int check_pipes(mysh_t *sh, char *line)
         close(pipefds[i]);
     pipe_res = wait_pipes(pipes_nb);
     freetab((void **)pipe_cmds);
+    printf("Pipe got %d\n", pipe_res);
     return pipe_res;
 }

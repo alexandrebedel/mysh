@@ -1,5 +1,5 @@
 #include "minishell.h"
-#include "utils.h"
+#include "utils/memory.h"
 #include <stdlib.h>
 
 int sh_exit(mysh_t *sh)
