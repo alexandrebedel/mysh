@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "prompt.h"
 
-bool display_prompt()
+bool display_prompt(void)
 {
     char pwd[256];
     int bytes = dprintf(STDOUT_FILENO, "\033[1m[\033[0m\033[35m%s\033[0m\033[1m]> \033[0m", getcwd(pwd, sizeof(pwd)));

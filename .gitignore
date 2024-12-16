@@ -68,3 +68,5 @@ wrong-arch
 !Makefile
 
 test-project
+
+lib/**/obj/
