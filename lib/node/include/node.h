@@ -18,6 +18,11 @@ node_t *create_node(void *data, void (*freefn)(void *data));
 node_t *push_node(node_t *node, void *data, void (*freefn)(void *data));
 
 /**
+ * Returns the node size
+ */
+int node_size(node_t *node);
+
+/**
  * Frees the nodes using the specified free function
  */
 void free_nodes(node_t *node);

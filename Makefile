@@ -12,7 +12,7 @@ OBJ			=	$(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 # Flags généraux
 CFLAGS 		=	-W -Wall -Wextra -Wshadow -Wconversion -pedantic
-CPPFLAGS 	= 	-I$(INCLUDE_DIR)
+CPPFLAGS 	= 	$(addprefix -I, $(INCLUDE_DIR))
 LDFLAGS		=	$(LIB_DIR)/libnode.a
 
 # Debug and release flags

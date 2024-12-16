@@ -39,6 +39,15 @@ node_t *push_node(node_t *node, void *data, void (*freefn)(void *data))
     return node;
 }
 
+int node_size(node_t *node)
+{
+    int i = 0;
+
+    for (node_t *tmp = node; tmp; i++)
+        tmp = tmp->next;
+    return i;
+}
+
 void free_nodes(node_t *node)
 {
     node_t *tmp;
