@@ -8,7 +8,6 @@
 
 static void free_all(mysh_t sh)
 {
-    freetab((void **)sh.paths);
     free_nodes(sh.env);
     free(sh.line);
 }
@@ -22,9 +21,7 @@ static mysh_t init_struct(char **env)
 {
     mysh_t sh;
 
-    // Should the paths be handled by the PATH variable itself ?
     sh.env = dupenv(env);
-    sh.paths = split_by(get_env_var(&sh, "PATH"), ":");
     sh.line = NULL;
     sh.exit_status = 0;
     return sh;

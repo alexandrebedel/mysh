@@ -8,6 +8,8 @@
 
 char **split_by(char *line, const char *delimiters)
 {
+    if (!line)
+        return NULL;
     char *copy = safe_strdup(line);
     char **args = NULL;
     char *token = strtok(copy, delimiters);

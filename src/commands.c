@@ -18,23 +18,23 @@
 #define PATH_BIN 1
 #define NOTFND_BIN 0
 
-static int get_bin_type(mysh_t *sh)
+static int get_bin_type(mysh_t *sh, char **paths)
 {
     if (access(sh->args[0], X_OK) == 0)
         return LOCAL_BIN;
-    for (int i = 0; sh->paths[i] != NULL; i++)
+    for (int i = 0; paths && paths[i] != NULL; i++)
     {
-        size_t len = strlen(sh->paths[i]) + strlen(sh->args[0]) + 2;
+        size_t len = strlen(paths[i]) + strlen(sh->args[0]) + 2;
         char full_path[len];
 
-        snprintf(full_path, len, "%s/%s", sh->paths[i], sh->args[0]);
+        snprintf(full_path, len, "%s/%s", paths[i], sh->args[0]);
         if (access(full_path, X_OK) == 0)
             return PATH_BIN;
     }
     return NOTFND_BIN;
 }
 
-static void run_command(mysh_t *sh, int command_status)
+static void run_command(mysh_t *sh, int command_status, char **paths)
 {
     char **env = map_node(sh->env, env_to_string);
 
@@ -43,18 +43,20 @@ static void run_command(mysh_t *sh, int command_status)
         execve(sh->args[0], sh->args, env);
         fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
         free_shell(sh);
+        freetab((void **)paths);
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; sh->paths[i] != NULL; i++)
+    for (int i = 0; paths && paths[i] != NULL; i++)
     {
-        size_t len = strlen(sh->paths[i]) + strlen(sh->args[0]) + 2;
+        size_t len = strlen(paths[i]) + strlen(sh->args[0]) + 2;
         char full_path[len];
 
-        snprintf(full_path, len, "%s/%s", sh->paths[i], sh->args[0]);
+        snprintf(full_path, len, "%s/%s", paths[i], sh->args[0]);
         execve(full_path, sh->args, env);
     }
     fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
     free_shell(sh);
+    freetab((void **)paths);
     freetab((void **)env);
     exit(EXIT_FAILURE);
 }
@@ -80,6 +82,7 @@ static int waitprocess(pid_t pid)
 
 int processes_management(mysh_t *sh)
 {
+    char **paths = NULL;
     int ret = 0;
     int status = 0;
     pid_t pid;
@@ -91,13 +94,15 @@ int processes_management(mysh_t *sh)
     }
     else if (pid == 0)
     {
-        if ((status = get_bin_type(sh)) == 0)
+        paths = split_by(get_env_var(sh, "PATH"), ":");
+        if ((status = get_bin_type(sh, paths)) == 0)
         {
             fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
+            freetab(paths);
             free_shell(sh);
             exit(EXIT_FAILURE);
         }
-        run_command(sh, status);
+        run_command(sh, status, paths);
     }
     else
         ret = waitprocess(pid);

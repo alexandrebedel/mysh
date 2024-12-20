@@ -21,12 +21,6 @@ typedef struct
      * Needs to be free'd
      */
     node_t *env;
-    /**
-     * Holds all the paths inside the PATH environment variable
-     *
-     * WARN: Don't forget to free on exit
-     */
-    char **paths;
     char **args;
     /**
      * Hold the commands separated by `;`

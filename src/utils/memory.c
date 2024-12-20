@@ -6,7 +6,6 @@
 
 void free_shell(mysh_t *sh)
 {
-    freetab((void **)sh->paths);
     freetab((void **)sh->args);
     free_nodes(sh->env);
     freetab((void **)sh->sep_commands);
