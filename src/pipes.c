@@ -138,5 +138,6 @@ int check_pipes(mysh_t *sh, char *line)
         close(pipefds[i]);
     pipe_res = wait_pipes(pipes_nb);
     sh->exit_status = pipe_res;
+    freetab((void **)pipe_cmds);
     return pipe_res;
 }
