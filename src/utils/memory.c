@@ -8,7 +8,7 @@ void free_shell(mysh_t *sh)
 {
     freetab((void **)sh->paths);
     freetab((void **)sh->args);
-    freetab((void **)sh->env);
+    free_nodes(sh->env);
     freetab((void **)sh->sep_commands);
     if (sh->line)
         free(sh->line);
@@ -23,6 +23,15 @@ void memory_error(void)
 char *safe_strdup(const char *str)
 {
     char *ptr = strdup(str);
+
+    if (ptr == NULL)
+        memory_error();
+    return ptr;
+}
+
+char *safe_strndup(const char *str, size_t size)
+{
+    char *ptr = strndup(str, size);
 
     if (ptr == NULL)
         memory_error();

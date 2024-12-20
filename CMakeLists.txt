@@ -9,7 +9,7 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -W")
 # Debug options
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} -fsanitize=address -g")
 
-include_directories(include)
+include_directories(include "lib/node/include")
 
 file(GLOB SOURCES "src/**.c" "src/builtins/*.c" "src/utils/*.c")
 

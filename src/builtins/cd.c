@@ -13,7 +13,7 @@
 static int move_home(mysh_t *sh)
 {
     char old_pwd[FILENAME_MAX];
-    char *home = get_env_var(sh->env, "HOME");
+    char *home = get_env_var(sh, "HOME");
     int ret = BUILTIN_SUCCESS;
 
     if (getcwd(old_pwd, FILENAME_MAX) == NULL)
@@ -22,15 +22,14 @@ static int move_home(mysh_t *sh)
         return BUILTIN_FAILURE;
     if (chdir(home) == 0)
     {
-        set_env_var(&sh->env, "PWD", home);
-        set_env_var(&sh->env, "OLDPWD", old_pwd);
+        set_env_var(sh, "PWD", home);
+        set_env_var(sh, "OLDPWD", old_pwd);
     }
     else
     {
         fprintf(stderr, "%s: %s\n", home, strerror(errno));
         ret = BUILTIN_FAILURE;
     }
-    free(home);
     return ret;
 }
 
@@ -48,8 +47,8 @@ static int move_to(mysh_t *sh, char *directory)
     }
     if (getcwd(new_cwd, FILENAME_MAX) == NULL)
         return BUILTIN_FAILURE;
-    set_env_var(&sh->env, "PWD", new_cwd);
-    set_env_var(&sh->env, "OLDPWD", cwd);
+    set_env_var(sh, "PWD", new_cwd);
+    set_env_var(sh, "OLDPWD", cwd);
     return BUILTIN_SUCCESS;
 }
 
@@ -67,12 +66,11 @@ int sh_cd(mysh_t *sh)
         return move_home(sh);
     else if (sh->args[1][0] == '-')
     {
-        char *path = get_env_var(sh->env, "OLDPWD");
+        char *path = get_env_var(sh, "OLDPWD");
 
         if (path == NULL)
             return BUILTIN_FAILURE;
         ret = move_to(sh, path);
-        free(path);
     }
     else
         ret = move_to(sh, sh->args[1]);

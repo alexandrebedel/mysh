@@ -1,35 +1,34 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "utils/memory.h"
 #include "utils/utils.h"
 #include "minishell.h"
 #include "environment.h"
-#include <string.h>
+#include "node.h"
 
-static bool var_exists(char **env, char *name)
+static inline void free_env(void *_env)
 {
-    for (int i = 0; env[i] != NULL; i++)
-    {
-        if (strncmp(env[i], name, strlen(name)) == 0)
-            return true;
-    }
-    return false;
+    environment_t *env = _env;
+
+    free(env->name);
+    if (env->value)
+        free(env->value);
+    free(env);
 }
 
-char **duplicate_env(char **env)
+static inline int find_predicate(void *_env, void *context)
 {
-    char **copy = safe_malloc(sizeof(char *) * (tablen((void **)env) + 1));
-    int i = 0;
+    environment_t *env = _env;
 
-    for (; env[i] != NULL; i++)
-        copy[i] = safe_strdup(env[i]);
-    copy[i] = NULL;
-    return copy;
+    return strcmp(env->name, (char *)context) == 0;
 }
 
-char *get_env_var(char **env, char *name)
+node_t *dupenv(char **env)
 {
-    int len = 0;
+    node_t *head = NULL;
+    environment_t *environment;
+    int len;
 
     for (int i = 0; env[i] != NULL; i++)
     {
@@ -38,68 +37,73 @@ char *get_env_var(char **env, char *name)
         if (!value)
             continue;
         len = value - env[i];
-        if (strncmp(env[i], name, len) == 0 && name[len] == '\0')
-            return safe_strdup(&value[1]);
+        environment = safe_malloc(sizeof(environment_t));
+        environment->name = safe_strndup(env[i], len);
+        environment->value = safe_strdup(&value[1]);
+        environment->is_local = false;
+        head = push_node(head, environment, free_env);
     }
-    return NULL;
+    return head;
 }
 
-int set_env_var(char ***env, char *name, char *value)
+int set_env_var(mysh_t *sh, char *name, char *value)
 {
-    int size = tablen((void **)*env);
-    char *new_var = safe_malloc(sizeof(char) * (strlen(name) + strlen(value ? value : "") + 2));
-    char **copy;
+    node_t *found_node = find_node(sh->env, find_predicate, name);
 
-    if (!new_var)
-        return BUILTIN_FAILURE;
-    sprintf(new_var, "%s=%s", name, value ? value : "");
-    for (int i = 0; (*env)[i] != NULL; i++)
+    if (found_node)
     {
-        if (strncmp((*env)[i], name, strlen(name)) == 0 && (*env)[i][strlen(name)] == '=')
-        {
-            free((*env)[i]);
-            (*env)[i] = new_var;
-            return BUILTIN_SUCCESS;
-        }
+        environment_t *env = (environment_t *)found_node->data;
+        free(env->value);
+        env->value = safe_strdup(value);
     }
-    copy = realloc(*env, sizeof(char *) * (size + 2));
-    if (!copy)
+    else
     {
-        free(new_var);
-        return BUILTIN_FAILURE;
+        environment_t *new_node_data = malloc(sizeof(environment_t));
+        new_node_data->is_local = false;
+        new_node_data->name = safe_strdup(name);
+        new_node_data->value = safe_strdup(value);
+        push_node(sh->env, new_node_data, free_env);
     }
-    *env = copy;
-    (*env)[size] = new_var;
-    (*env)[size + 1] = NULL;
     return BUILTIN_SUCCESS;
 }
 
-int unset_env_var(char ***env, char *name)
+char *get_env_var(mysh_t *sh, char *name)
 {
-    int i = 0;
-    int j = 0;
-    char **copy;
+    node_t *found_node = find_node(sh->env, find_predicate, name);
+    environment_t *env;
 
-    if (!var_exists(*env, name))
-        return BUILTIN_SUCCESS;
-    copy = safe_malloc(sizeof(char *) * tablen((void **)*env));
-    for (; (*env)[i] != NULL; i++)
-    {
-        if (strncmp((*env)[i], name, strlen(name)) == 0 && (*env)[i][strlen(name)] == '=')
-            continue;
-        copy[j++] = safe_strdup((*env)[i]);
-    }
-    copy[j] = NULL;
-    freetab((void **)*env);
-    *env = copy;
+    if (found_node == NULL)
+        return NULL;
+    env = found_node->data;
+    return env && env->value ? env->value : NULL;
+}
+
+int unset_env_var(mysh_t *sh, char *name)
+{
+    sh->env = remove_node(sh->env, find_predicate, (void *)name);
     return BUILTIN_SUCCESS;
 }
 
-int dump_env(char **env)
+int dump_env(node_t *node)
 {
-    for (int i = 0; env[i] != NULL; i++)
+    node_t *current = node;
+    environment_t *env;
+
+    while (current != NULL)
     {
-        printf("%s\n", env[i]);
+        env = (environment_t *)current->data;
+        printf("%s=%s\n", env->name, env->value);
+        current = current->next;
     }
     return BUILTIN_SUCCESS;
+}
+
+char *env_to_string(void *data)
+{
+    environment_t *env = (environment_t *)data;
+    size_t len = strlen(env->name) + strlen(env->value) + 2;
+    char *result = safe_malloc(len);
+
+    snprintf(result, len, "%s=%s", env->name, env->value);
+    return result;
 }

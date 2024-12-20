@@ -1,6 +1,7 @@
 #if !defined(MINISHELL_H)
 #define MINISHELL_H
 
+#include "node.h"
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -15,14 +16,13 @@ typedef struct
 {
     char *line;
     /**
-     * Holds all the environments variables
+     * Holds the environment using the environment_t struct
      *
-     * WARN: Don't forget to free on exit
+     * Needs to be free'd
      */
-    char **env;
+    node_t *env;
     /**
-     * Holds all the paths inside the PATH
-     * environment variable
+     * Holds all the paths inside the PATH environment variable
      *
      * WARN: Don't forget to free on exit
      */

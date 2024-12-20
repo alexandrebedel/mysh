@@ -33,18 +33,19 @@ char **eval_variables(mysh_t *sh, char **args)
                 free(value);
                 return args;
             }
+            free(args[i]);
             args[i] = value;
         }
         else if (args[i][0] == '$' && isalnum(args[i][1]))
         {
-            char *value = get_env_var(sh->env, &(args[i])[1]);
+            char *value = get_env_var(sh, &(args[i])[1]);
 
             // TODO: Should we return an error message when
             // the variable is not found?
             if (value == NULL)
                 return args;
             free(args[i]);
-            args[i] = value;
+            args[i] = safe_strdup(value);
         }
     }
     return args;

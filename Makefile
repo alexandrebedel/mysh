@@ -33,7 +33,7 @@ release: CFLAGS += $(CFLAGS_RELEASE)
 release: re
 
 $(NAME): $(OBJ) $(LIB_DIR)/libnode.a
-	$(CC) $(OBJ) -o $(NAME) $(LDFLAGS)
+	$(CC) $(OBJ) $(LDFLAGS) -o $(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
@@ -47,6 +47,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 fclean: clean
+	$(MAKE) -C $(LIB_DIR) fclean
 	rm -f $(NAME)
 
 re: fclean all

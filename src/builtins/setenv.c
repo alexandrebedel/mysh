@@ -56,5 +56,5 @@ int sh_setenv(mysh_t *sh)
         return status;
     if (status == 2)
         return dump_env(sh->env);
-    return set_env_var(&sh->env, sh->args[1], sh->args[2]);
+    return set_env_var(sh, sh->args[1], sh->args[2]);
 }

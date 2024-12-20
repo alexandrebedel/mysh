@@ -3,24 +3,29 @@
 
 #include "minishell.h"
 
-/**
- * Returns a newly allocated `char **`
- * from the provided env
- */
-char **duplicate_env(char **env);
+typedef struct
+{
+    char *name;
+    char *value;
+    bool is_local;
+} environment_t;
 
 /**
- * Gets an environment variable by its name
- * and return the value
- *
- * WARN: Don't forget to free the value
+ * Saves the environment into a `node_t<environment_t>` linked list
  */
-char *get_env_var(char **env, char *name);
+node_t *dupenv(char **env);
+
+/**
+ * Looks inside the `node_t<environment_t>` and return
+ * the matching value. No need to free since it will
+ * be done by the free_node function
+ */
+char *get_env_var(mysh_t *sh, char *name);
 
 /**
  * stdouts the provided env
  */
-int dump_env(char **env);
+int dump_env(node_t *env);
 
 /**
  * Mutates the given environment by the variable
@@ -28,7 +33,7 @@ int dump_env(char **env);
  *
  * @returns A success or failure code
  */
-int set_env_var(char ***env, char *name, char *value);
+int set_env_var(mysh_t *sh, char *name, char *value);
 
 /**
  * Removes from the given environment
@@ -39,6 +44,11 @@ int set_env_var(char ***env, char *name, char *value);
  *
  * @returns A success or failure code
  */
-int unset_env_var(char ***env, char *name);
+int unset_env_var(mysh_t *sh, char *name);
+
+/**
+ * Mapper function to transform the node_t<environment_t> to a char **
+ */
+char *env_to_string(void *data);
 
 #endif // ENVIRONMENT_H

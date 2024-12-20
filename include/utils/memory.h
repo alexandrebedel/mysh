@@ -17,6 +17,8 @@ void *safe_malloc(size_t size);
 
 char *safe_strdup(const char *str);
 
+char *safe_strndup(const char *str, size_t size);
+
 /**
  * Frees a 2d array
  */

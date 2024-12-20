@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "minishell.h"
 #include "utils/memory.h"
+#include "utils/utils.h"
 #include "environment.h"
 #include <unistd.h>
 #include <string.h>
@@ -35,9 +36,11 @@ static int get_bin_type(mysh_t *sh)
 
 static void run_command(mysh_t *sh, int command_status)
 {
+    char **env = map_node(sh->env, env_to_string);
+
     if (command_status == LOCAL_BIN)
     {
-        execve(sh->args[0], sh->args, sh->env);
+        execve(sh->args[0], sh->args, env);
         fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
         free_shell(sh);
         exit(EXIT_FAILURE);
@@ -48,10 +51,11 @@ static void run_command(mysh_t *sh, int command_status)
         char full_path[len];
 
         snprintf(full_path, len, "%s/%s", sh->paths[i], sh->args[0]);
-        execve(full_path, sh->args, sh->env);
+        execve(full_path, sh->args, env);
     }
     fprintf(stderr, "%s: %s.\n", sh->args[0], strerror(errno));
     free_shell(sh);
+    freetab((void **)env);
     exit(EXIT_FAILURE);
 }
 

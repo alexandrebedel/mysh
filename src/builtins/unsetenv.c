@@ -16,7 +16,7 @@ int sh_unsetenv(mysh_t *sh)
     }
     for (int i = 1; sh->args[i] != NULL; i++)
     {
-        if (unset_env_var(&sh->env, sh->args[i]) == 1)
+        if (unset_env_var(sh, sh->args[i]) == 1)
             return BUILTIN_FAILURE;
     }
     return BUILTIN_SUCCESS;
