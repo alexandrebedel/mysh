@@ -3,11 +3,14 @@
 
 #include "minishell.h"
 
-typedef struct
+typedef char *(*localfn_t)(mysh_t *sh);
+
+typedef struct environment_s
 {
     char *name;
     char *value;
     bool is_local;
+    localfn_t localfn;
 } environment_t;
 
 /**
@@ -21,6 +24,8 @@ node_t *dupenv(char **env);
  * be done by the free_node function
  */
 char *get_env_var(mysh_t *sh, char *name);
+
+environment_t *get_env_node(mysh_t *sh, char *name);
 
 /**
  * stdouts the provided env
@@ -50,5 +55,7 @@ int unset_env_var(mysh_t *sh, char *name);
  * Mapper function to transform the node_t<environment_t> to a char **
  */
 char *env_to_string(void *data);
+
+void free_env(void *_env);
 
 #endif // ENVIRONMENT_H

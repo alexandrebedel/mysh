@@ -98,7 +98,7 @@ int processes_management(mysh_t *sh)
         if ((status = get_bin_type(sh, paths)) == 0)
         {
             fprintf(stderr, "%s: Command not found.\n", sh->args[0]);
-            freetab(paths);
+            freetab((void **)paths);
             free_shell(sh);
             exit(EXIT_FAILURE);
         }

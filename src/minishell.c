@@ -16,36 +16,26 @@
 
 static const char *DELIMITERS = " \n\t";
 
-/**
- * Checks for arguments starting with `$` in the command line
- * and replaces them with their environment variable values.
- */
 char **eval_variables(mysh_t *sh, char **args)
 {
+    environment_t *env;
+    char *new_value = NULL;
+
     for (int i = 0; args[i] != NULL; i++)
     {
-        if (args[i][0] == '$' && args[i][1] == '?')
+        if (args[i][0] != '$')
+            continue;
+        env = get_env_node(sh, &(args[i])[1]);
+        if (env == NULL || (!env->is_local && !env->value))
+            continue;
+        if (env->is_local && env->localfn)
+            new_value = env->localfn(sh);
+        else
+            new_value = safe_strdup(env->value);
+        if (new_value)
         {
-            char *value = safe_malloc(4);
-
-            if (snprintf(value, 4, "%d", sh->exit_status) < 0)
-            {
-                free(value);
-                return args;
-            }
             free(args[i]);
-            args[i] = value;
-        }
-        else if (args[i][0] == '$' && isalnum(args[i][1]))
-        {
-            char *value = get_env_var(sh, &(args[i])[1]);
-
-            // TODO: Should we return an error message when
-            // the variable is not found?
-            if (value == NULL)
-                return args;
-            free(args[i]);
-            args[i] = safe_strdup(value);
+            args[i] = new_value;
         }
     }
     return args;

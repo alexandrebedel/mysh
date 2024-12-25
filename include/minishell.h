@@ -30,12 +30,15 @@ typedef struct
      * Last command exit status
      */
     int exit_status;
+    pid_t current_pid;
 } mysh_t;
 
 /**
  * Initializes the shell
  */
 int run_shell(mysh_t *mysh);
+
+mysh_t init_struct(char **env);
 
 // Shell builtin function definition
 //
@@ -45,7 +48,12 @@ int sh_setenv(mysh_t *sh);
 int sh_unsetenv(mysh_t *sh);
 int sh_env(mysh_t *sh);
 
+/**
+ * Checks for arguments starting with `$` in the command line
+ * and replaces them with their environment variable values.
+ */
 char **eval_variables(mysh_t *sh, char **args);
+
 int check_separators(mysh_t *sh);
 
 // Shell commands functions definition

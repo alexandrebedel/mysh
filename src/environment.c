@@ -7,7 +7,14 @@
 #include "environment.h"
 #include "node.h"
 
-static inline void free_env(void *_env)
+static inline int find_predicate(void *_env, void *context)
+{
+    environment_t *env = _env;
+
+    return strcmp(env->name, (char *)context) == 0;
+}
+
+void free_env(void *_env)
 {
     environment_t *env = _env;
 
@@ -15,13 +22,6 @@ static inline void free_env(void *_env)
     if (env->value)
         free(env->value);
     free(env);
-}
-
-static inline int find_predicate(void *_env, void *context)
-{
-    environment_t *env = _env;
-
-    return strcmp(env->name, (char *)context) == 0;
 }
 
 node_t *dupenv(char **env)
@@ -67,7 +67,7 @@ int set_env_var(mysh_t *sh, char *name, char *value)
     return BUILTIN_SUCCESS;
 }
 
-char *get_env_var(mysh_t *sh, char *name)
+environment_t *get_env_node(mysh_t *sh, char *name)
 {
     node_t *found_node = find_node(sh->env, find_predicate, name);
     environment_t *env;
@@ -75,6 +75,13 @@ char *get_env_var(mysh_t *sh, char *name)
     if (found_node == NULL)
         return NULL;
     env = found_node->data;
+    return env ? env : NULL;
+}
+
+char *get_env_var(mysh_t *sh, char *name)
+{
+    environment_t *env = get_env_node(sh, name);
+
     return env && env->value ? env->value : NULL;
 }
 
@@ -92,6 +99,11 @@ int dump_env(node_t *node)
     while (current != NULL)
     {
         env = (environment_t *)current->data;
+        if (env->is_local)
+        {
+            current = current->next;
+            continue;
+        }
         printf("%s=%s\n", env->name, env->value);
         current = current->next;
     }
@@ -101,6 +113,9 @@ int dump_env(node_t *node)
 char *env_to_string(void *data)
 {
     environment_t *env = (environment_t *)data;
+
+    if (env->is_local)
+        return NULL;
     size_t len = strlen(env->name) + strlen(env->value) + 2;
     char *result = safe_malloc(len);
 

@@ -61,26 +61,31 @@ char **map_node(node_t *node, node_str_mapper mapper)
 {
     int size = node_size(node);
     node_t *tmp = node;
+    char *mapped_value;
     char **result = malloc((size + 1) * sizeof(char *));
+    int count = 0;
 
-    if (!result) {
+    if (!result)
+    {
         fprintf(stderr, "critical error: Out of memory (node.c)\n");
         return NULL;
     }
     for (int i = 0; i < size; i++)
     {
-        result[i] = mapper(tmp->data);
-        if (!result[i])
-        {
-            fprintf(stderr, "node: map_node mapper returned NULL\n");
-            for (int j = 0; j < i; j++)
-                free(result[j]);
-            free(result);
-            return NULL;
-        }
+        if ((mapped_value = mapper(tmp->data)))
+            result[count++] = mapped_value;
         tmp = tmp->next;
     }
-    result[size] = NULL;
+    result = realloc(result, (count + 1) * sizeof(char *));
+    if (!result)
+    {
+        fprintf(stderr, "critical error: Out of memory (node.c) during resize\n");
+        for (int j = 0; j < count; j++)
+            free(result[j]);
+        free(result);
+        return NULL;
+    }
+    result[count] = NULL;
     return result;
 }
 
